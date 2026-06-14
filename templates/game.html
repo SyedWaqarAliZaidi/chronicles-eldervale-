@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chronicles of Eldervale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep:#07070f;--bg-panel:#0e0e1a;--bg-card:#13131e;--bg-input:#181826;
+  --border:#252540;--border-glow:#4a3f7a;--gold:#c9a84c;--gold-dim:#6a5828;
+  --gold-glow:rgba(201,168,76,0.35);--moon:#7eb8d4;--moon-dim:#3a6a80;
+  --text:#e8e0d0;--text-dim:#8a8070;--text-muted:#3a3850;
+  --hp-green:#3d8a4d;--hp-yellow:#8a7a2d;--hp-red:#8a2d2d;
+  --warrior:#c0392b;--mage:#8e44ad;--rogue:#27ae60;--healer:#16a085;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg-deep);color:var(--text);font-family:'Crimson Text',serif;font-size:18px;display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+header{background:linear-gradient(180deg,#0a0a16,var(--bg-panel));border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-moon{font-size:26px;animation:moonPulse 3s ease-in-out infinite;filter:drop-shadow(0 0 8px var(--moon));}
+@keyframes moonPulse{0%,100%{filter:drop-shadow(0 0 8px var(--moon));}50%{filter:drop-shadow(0 0 20px var(--moon));}}
+.logo-text h1{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);letter-spacing:3px;text-shadow:0 0 20px var(--gold-glow);}
+.logo-text p{font-size:10px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.badge{font-size:10px;padding:4px 12px;border-radius:20px;font-family:'Share Tech Mono',monospace;letter-spacing:1px;border:1px solid;}
+.badge-foundry{border-color:var(--moon-dim);color:var(--moon);background:rgba(74,143,168,0.12);}
+.badge-agents{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,168,76,0.1);}
+.sound-btn{background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text-dim);font-size:16px;padding:4px 12px;cursor:pointer;transition:all 0.2s;}
+.sound-btn:hover{border-color:var(--border-glow);color:var(--text);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:210px 1fr 190px;flex:1;overflow:hidden;}
+
+/* LEFT PANEL */
+.panel-left{background:var(--bg-panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 10px;gap:8px;overflow-y:auto;}
+.panel-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.member{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;transition:all 0.3s;position:relative;overflow:hidden;}
+.member::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.3s;}
+.member.speaking{border-color:var(--border-glow);}
+.member.speaking::before{opacity:1;}
+.member.warrior::before{background:var(--warrior);}
+.member.mage::before{background:var(--mage);}
+.member.rogue::before{background:var(--rogue);}
+.member.healer::before{background:var(--healer);}
+.member-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.member-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:rgba(255,255,255,0.04);transition:transform 0.2s;}
+.member.speaking .member-avatar{transform:scale(1.1);}
+.member-info{flex:1;min-width:0;}
+.member-name{font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.member-role{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+.hp-track{background:rgba(0,0,0,0.5);border-radius:3px;height:4px;overflow:hidden;}
+.hp-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.hp-green{background:var(--hp-green);box-shadow:0 0 6px rgba(61,138,77,0.6);}
+.hp-yellow{background:var(--hp-yellow);box-shadow:0 0 6px rgba(138,122,45,0.6);}
+.hp-red{background:var(--hp-red);box-shadow:0 0 6px rgba(138,45,45,0.6);}
+.hp-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-muted);text-align:right;margin-top:3px;}
+.member-speech{font-size:12px;color:var(--text-dim);font-style:italic;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:none;line-height:1.4;}
+.member.speaking .member-speech{display:block;}
+
+/* CENTER */
+.panel-center{display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* WELCOME OVERLAY */
+#welcome-overlay{position:absolute;inset:0;background:var(--bg-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:40px;z-index:20;}
+.welcome-moon{font-size:80px;animation:moonFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 30px var(--moon));}
+@keyframes moonFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.welcome-title{font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--gold);letter-spacing:4px;text-shadow:0 0 40px var(--gold-glow);}
+.welcome-sub{color:var(--text-dim);font-size:16px;max-width:420px;line-height:1.7;}
+.welcome-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.welcome-badge{font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);font-family:'Share Tech Mono',monospace;}
+.start-btn{background:linear-gradient(135deg,#3a2f6a,#251d50);border:1px solid var(--border-glow);border-radius:10px;color:var(--gold);font-family:'Cinzel',serif;font-size:15px;font-weight:600;letter-spacing:2px;padding:16px 44px;cursor:pointer;transition:all 0.3s;margin-top:8px;}
+.start-btn:hover{background:linear-gradient(135deg,#4a3f7a,#352d60);box-shadow:0 0 30px rgba(74,63,122,0.6),0 0 60px rgba(201,168,76,0.1);transform:translateY(-2px);}
+
+/* FEED */
+.feed{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth;}
+.feed::-webkit-scrollbar{width:4px;}
+.feed::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
+
+/* MESSAGES */
+.msg{animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.msg-gm{background:linear-gradient(135deg,var(--bg-panel),#111120);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:16px 20px;}
+.msg-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.msg-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-dim),transparent);}
+.msg-body{line-height:1.8;color:var(--text);}
+.msg-body p{margin-bottom:10px;}
+.msg-body p:last-child{margin-bottom:0;}
+.msg-player{display:flex;justify-content:flex-end;}
+.msg-player-bubble{background:rgba(74,63,122,0.25);border:1px solid var(--border-glow);border-radius:12px 12px 0 12px;padding:10px 16px;max-width:75%;font-style:italic;color:var(--text-dim);font-size:16px;}
+.msg-dice{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.dice-icon{font-size:26px;animation:diceRoll 0.6s ease;}
+@keyframes diceRoll{0%{transform:rotate(0) scale(0.5);}60%{transform:rotate(380deg) scale(1.2);}100%{transform:rotate(360deg) scale(1);}}
+.dice-info{flex:1;}
+.dice-actor{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:3px;}
+.dice-line{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text);}
+.dice-badge{font-family:'Cinzel',serif;font-size:11px;font-weight:700;padding:4px 14px;border-radius:4px;letter-spacing:1px;white-space:nowrap;}
+.r-critical_success{background:rgba(201,168,76,0.2);color:var(--gold);border:1px solid var(--gold-dim);}
+.r-success{background:rgba(61,138,77,0.2);color:#6dcc80;border:1px solid var(--hp-green);}
+.r-partial{background:rgba(138,122,45,0.2);color:#ccbc50;border:1px solid var(--hp-yellow);}
+.r-failure{background:rgba(138,45,45,0.2);color:#cc5050;border:1px solid var(--hp-red);}
+.r-critical_failure{background:rgba(100,10,10,0.3);color:#ff3030;border:1px solid #991010;}
+.typing-cursor{display:inline-block;width:2px;height:1em;background:var(--gold);margin-left:2px;animation:blink 0.8s step-end infinite;vertical-align:text-bottom;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.msg-loading{display:flex;align-items:center;gap:10px;color:var(--text-dim);font-style:italic;font-size:15px;padding:8px 0;}
+.loading-dots{display:flex;gap:4px;}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold-dim);animation:dotPulse 1.4s infinite;}
+.loading-dots span:nth-child(2){animation-delay:0.2s;}
+.loading-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotPulse{0%,80%,100%{opacity:0.2;transform:scale(0.8);}40%{opacity:1;transform:scale(1.2);}}
+
+/* ACTION AREA */
+.action-area{border-top:1px solid var(--border);background:var(--bg-panel);padding:14px 20px;flex-shrink:0;}
+.suggested-actions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:0;}
+.action-btn{background:rgba(74,63,122,0.2);border:1px solid var(--border);border-radius:20px;color:var(--text-dim);font-family:'Crimson Text',serif;font-size:14px;padding:5px 14px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.action-btn:hover{background:rgba(74,63,122,0.4);border-color:var(--border-glow);color:var(--text);transform:translateY(-1px);}
+.input-row{display:flex;gap:10px;align-items:flex-end;}
+.input-wrap{flex:1;}
+.input-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:5px;}
+#player-input{width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:11px 16px;color:var(--text);font-family:'Crimson Text',serif;font-size:17px;resize:none;outline:none;transition:all 0.2s;min-height:46px;max-height:100px;}
+#player-input:focus{border-color:var(--border-glow);box-shadow:0 0 0 2px rgba(74,63,122,0.2);}
+#player-input::placeholder{color:var(--text-muted);}
+#player-input:disabled{opacity:0.5;}
+#send-btn{background:linear-gradient(135deg,#3a2f6a,#251d50);border:1px solid var(--border-glow);border-radius:8px;color:var(--gold);font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:1px;padding:11px 20px;cursor:pointer;transition:all 0.2s;height:46px;white-space:nowrap;}
+#send-btn:hover:not(:disabled){background:linear-gradient(135deg,#4a3f7a,#352d60);box-shadow:0 0 12px rgba(74,63,122,0.5);}
+#send-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.input-hint{font-size:11px;color:var(--text-muted);margin-top:5px;font-style:italic;}
+
+/* RIGHT PANEL */
+.panel-right{background:var(--bg-panel);border-left:1px solid var(--border);padding:14px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+.panel-right::-webkit-scrollbar{width:3px;}
+.panel-right::-webkit-scrollbar-thumb{background:var(--border);}
+.world-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.wc-title{font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;}
+.countdown{text-align:center;padding:8px 0;}
+.countdown-num{font-family:'Cinzel',serif;font-size:42px;font-weight:700;color:var(--gold);text-shadow:0 0 20px var(--gold-glow);line-height:1;}
+.countdown-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.wstat{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(37,37,64,0.6);font-size:13px;}
+.wstat:last-child{border-bottom:none;}
+.wstat-key{color:var(--text-dim);}
+.wstat-val{color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;text-align:right;max-width:100px;word-break:break-word;}
+.flag{display:flex;align-items:center;gap:7px;padding:4px 0;}
+.flag-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fd-on{background:var(--hp-green);box-shadow:0 0 6px rgba(61,138,77,0.8);}
+.fd-off{background:var(--text-muted);}
+.flag-name{font-size:11px;color:var(--text-dim);}
+.new-btn{width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;padding:8px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.new-btn:hover{border-color:var(--border-glow);color:var(--text);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-moon">🌙</span>
+    <div class="logo-text">
+      <h1>Chronicles of Eldervale</h1>
+      <p>Multi-Agent Fantasy RPG · Microsoft Foundry IQ</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="badge badge-foundry">⚡ Foundry IQ</span>
+    <span class="badge badge-agents">🤖 6 Agents</span>
+    <button class="sound-btn" id="sound-btn" title="Toggle Music">🔇</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: PARTY -->
+  <aside class="panel-left">
+    <div class="panel-title">⚔ Party</div>
+    <div id="party-list"></div>
+  </aside>
+
+  <!-- CENTER -->
+  <main class="panel-center">
+
+    <!-- WELCOME OVERLAY -->
+    <div id="welcome-overlay">
+      <div class="welcome-moon">🌙</div>
+      <div class="welcome-title">Chronicles of Eldervale</div>
+      <div class="welcome-sub">The moon shattered 100 years ago. Six AI agents await your command. The truth lies beyond the Moonlit Gate.</div>
+      <div class="welcome-badges">
+        <span class="welcome-badge">🧠 Game Master Agent</span>
+        <span class="welcome-badge">⚔️ Warrior Agent</span>
+        <span class="welcome-badge">🔮 Mage Agent</span>
+        <span class="welcome-badge">🗡️ Rogue Agent</span>
+        <span class="welcome-badge">💚 Healer Agent</span>
+        <span class="welcome-badge">😈 Rival Agent</span>
+      </div>
+      <button class="start-btn" id="start-btn">⚔ Begin Adventure</button>
+    </div>
+
+    <div class="feed" id="feed"></div>
+
+    <div class="action-area">
+      <div class="suggested-actions" id="suggested-actions"></div>
+      <div class="input-row">
+        <div class="input-wrap">
+          <div class="input-label">◆ Your Action</div>
+          <textarea id="player-input" placeholder="Describe what you do… (e.g. I approach Maren Doss and ask about the lights)" rows="1" disabled></textarea>
+        </div>
+        <button id="send-btn" disabled>Send ▶</button>
+      </div>
+      <div class="input-hint">Enter to send · Shift+Enter for new line</div>
+    </div>
+  </main>
+
+  <!-- RIGHT: WORLD -->
+  <aside class="panel-right">
+    <div class="panel-title">🌍 World</div>
+    <div class="world-card">
+      <div class="countdown">
+        <div class="countdown-num" id="days-num">12</div>
+        <div class="countdown-label">Days to Centennial</div>
+      </div>
+    </div>
+    <div class="world-card">
+      <div class="wc-title">Current State</div>
+      <div class="wstat"><span class="wstat-key">📍 Location</span><span class="wstat-val" id="w-loc">Thornwall</span></div>
+      <div class="wstat"><span class="wstat-key">🌙 Time</span><span class="wstat-val" id="w-time">Evening</span></div>
+      <div class="wstat"><span class="wstat-key">🎯 Quest</span><span class="wstat-val">Starwell Relic</span></div>
+      <div class="wstat"><span class="wstat-key">😈 Rival</span><span class="wstat-val" id="w-rival">Neutral</span></div>
+    </div>
+    <div class="world-card">
+      <div class="wc-title">Discoveries</div>
+      <div id="flags-list"></div>
+    </div>
+    <button class="new-btn" onclick="newGame()">↺ New Game</button>
+  </aside>
+</div>
+
+<!-- AUDIO -->
+<audio id="bg-music" loop></audio>
+<audio id="sfx-dice"></audio>
+<audio id="sfx-send"></audio>
+
+<script>
+const feed        = document.getElementById('feed');
+const inputEl     = document.getElementById('player-input');
+const sendBtn     = document.getElementById('send-btn');
+const suggestedEl = document.getElementById('suggested-actions');
+const soundBtn    = document.getElementById('sound-btn');
+const bgMusic     = document.getElementById('bg-music');
+const sfxDice     = document.getElementById('sfx-dice');
+const sfxSend     = document.getElementById('sfx-send');
+const overlay     = document.getElementById('welcome-overlay');
+const startBtn    = document.getElementById('start-btn');
+
+let musicOn = false;
+let busy    = false;
+
+// Party and flags built after AGENTS defined below
+
+// Start button
+startBtn.addEventListener('click', beginAdventure);
+
+// Input handlers
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAction(); }
+});
+inputEl.addEventListener('input', () => {
+  inputEl.style.height = 'auto';
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
+});
+sendBtn.addEventListener('click', sendAction);
+
+// Sound toggle
+soundBtn.addEventListener('click', () => {
+  musicOn = !musicOn;
+  if (musicOn) { bgMusic.volume = 0.2; bgMusic.play().catch(()=>{}); soundBtn.textContent = '🔊'; }
+  else          { bgMusic.pause(); soundBtn.textContent = '🔇'; }
+});
+
+function playFx(el) { try { el.currentTime=0; el.play(); } catch(e){} }
+
+// ── BEGIN ADVENTURE ──
+function beginAdventure() {
+  startBtn.disabled = true;
+  startBtn.textContent = 'Entering Eldervale…';
+  fetch('/api/start', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({new_game: false})
+  })
+  .then(r => r.json())
+  .then(data => {
+    overlay.style.display = 'none';
+    if (data.success) {
+      typeMessage(data.message, () => {
+        updateState(data.state);
+        extractButtons(data.message);
+        setDisabled(false);
+      });
+    } else {
+      showError('Could not connect to the Game Master. Check your API keys.');
+    }
+  })
+  .catch(err => {
+    overlay.style.display = 'none';
+    showError('Connection failed: ' + err.message);
+  });
+}
+
+// ── SEND ACTION ──
+function sendAction() {
+  const text = inputEl.value.trim();
+  if (!text || busy) return;
+  playFx(sfxSend);
+  addPlayerBubble(text);
+  inputEl.value = '';
+  inputEl.style.height = 'auto';
+  suggestedEl.innerHTML = '';
+  setDisabled(true);
+  showLoading('The Game Master consults Foundry IQ and gathers the agents…');
+
+  fetch('/api/action', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action: text})
+  })
+  .then(r => r.json())
+  .then(data => {
+    removeLoading();
+    if (data.success) {
+      if (data.dice) { playFx(sfxDice); addDiceBlock(data.dice); }
+      typeMessage(data.message, () => {
+        updateState(data.state);
+        extractButtons(data.message);
+        setDisabled(false);
+      });
+    } else {
+      showError('The agents could not respond. Try a different action.');
+      setDisabled(false);
+    }
+  })
+  .catch(() => {
+    removeLoading();
+    showError('Connection lost. Make sure Flask is running.');
+    setDisabled(false);
+  });
+}
+
+// ── NEW GAME ──
+function newGame() {
+  if (!confirm('Start a new adventure? Current progress will be lost.')) return;
+  feed.innerHTML = '';
+  suggestedEl.innerHTML = '';
+  overlay.style.display = 'flex';
+  startBtn.disabled = false;
+  startBtn.textContent = '⚔ Begin Adventure';
+  setDisabled(true);
+  fetch('/api/start', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({new_game:true})});
+}
+
+// ── TYPING ANIMATION ──
+function typeMessage(text, onDone) {
+  const el = document.createElement('div');
+  el.className = 'msg msg-gm';
+  const labelEl = document.createElement('div');
+  labelEl.className = 'msg-label';
+  labelEl.textContent = '◆ Game Master';
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'msg-body';
+  el.appendChild(labelEl);
+  el.appendChild(bodyEl);
+  feed.appendChild(el);
+  scrollFeed();
+
+  const paras = text.split(/\n+/).filter(p => p.trim());
+  let pi = 0, ci = 0, curP = null, cursor = null;
+
+  function tick() {
+    if (pi >= paras.length) {
+      if (cursor) cursor.remove();
+      highlightSpeakers(text);
+      if (onDone) onDone();
+      return;
+    }
+    if (ci === 0) {
+      if (cursor) cursor.remove();
+      curP = document.createElement('p');
+      cursor = document.createElement('span');
+      cursor.className = 'typing-cursor';
+      curP.appendChild(cursor);
+      bodyEl.appendChild(curP);
+    }
+    if (ci < paras[pi].length) {
+      curP.insertBefore(document.createTextNode(paras[pi][ci]), cursor);
+      ci++;
+      scrollFeed();
+      const ch = paras[pi][ci-1];
+      setTimeout(tick, ch==='.'?55:ch===','?25:10);
+    } else {
+      ci = 0; pi++;
+      setTimeout(tick, 80);
+    }
+  }
+  tick();
+}
+
+// ── PLAYER BUBBLE ──
+function addPlayerBubble(text) {
+  const el = document.createElement('div');
+  el.className = 'msg msg-player';
+  el.innerHTML = `<div class="msg-player-bubble">${esc(text)}</div>`;
+  feed.appendChild(el);
+  scrollFeed();
+}
+
+// ── DICE ──
+function addDiceBlock(dice) {
+  const rClass = 'r-' + dice.result;
+  const label  = dice.result.replace(/_/g,' ').toUpperCase();
+  let special  = dice.natural_20 ? ' ⚡ NAT 20!' : dice.natural_1 ? ' 💀 NAT 1!' : '';
+  const el = document.createElement('div');
+  el.className = 'msg msg-dice';
+  el.innerHTML = `
+    <span class="dice-icon">🎲</span>
+    <div class="dice-info">
+      <div class="dice-actor">${esc(dice.actor)} — ${esc(dice.check)}</div>
+      <div class="dice-line">d20 → ${dice.roll} + ${dice.modifier} = <strong>${dice.total}</strong> vs DC ${dice.difficulty}${special}</div>
+    </div>
+    <span class="dice-badge ${rClass}">${label}</span>`;
+  feed.appendChild(el);
+  scrollFeed();
+}
+
+// ── LOADING / ERROR ──
+function showLoading(msg) {
+  const el = document.createElement('div');
+  el.className = 'msg msg-loading'; el.id = 'loading-el';
+  el.innerHTML = `<span>${msg}</span><div class="loading-dots"><span></span><span></span><span></span></div>`;
+  feed.appendChild(el); scrollFeed();
+}
+function removeLoading() { const el=document.getElementById('loading-el'); if(el) el.remove(); }
+function showError(msg) {
+  const el = document.createElement('div');
+  el.className = 'msg msg-gm';
+  el.innerHTML = `<div class="msg-label">◆ System</div><div class="msg-body"><p style="color:#cc5050">${esc(msg)}</p></div>`;
+  feed.appendChild(el); scrollFeed();
+}
+
+// ── SUGGESTED BUTTONS ──
+function extractButtons(text) {
+  suggestedEl.innerHTML = '';
+  const patterns = [
+    /^[A-C]\)\s+(.+?)$/gm,
+    /^\d+\.\s+(.+?)(?:\.|$)/gm
+  ];
+  let matches = [];
+  for (const p of patterns) {
+    const m = [...text.matchAll(p)];
+    if (m.length) { matches = m; break; }
+  }
+  matches.slice(0,4).forEach(m => {
+    const label = m[1].trim().slice(0,90);
+    const btn = document.createElement('button');
+    btn.className = 'action-btn';
+    btn.textContent = label;
+    btn.onclick = () => { inputEl.value = label; sendAction(); };
+    suggestedEl.appendChild(btn);
+  });
+}
+
+// ── STATE UPDATE ──
+function updateState(s) {
+  if (!s) return;
+  const dn = document.getElementById('days-num');
+  if (dn) { dn.textContent = s.days_left ?? '—'; dn.style.color = s.days_left<=3?'#cc5050':s.days_left<=7?'#ccbc50':'var(--gold)'; }
+  setText('w-loc', s.location || '—');
+  setText('w-time', cap(s.time || '—'));
+  setText('w-rival', cap(s.rival_trust || '—'));
+
+  if (s.party) s.party.forEach(m => {
+    const bar = document.getElementById('hp-' + m.role);
+    const num = document.getElementById('hn-' + m.role);
+    if (bar) { const p=m.hp_pct; bar.style.width=p+'%'; bar.className='hp-fill '+(p>60?'hp-green':p>30?'hp-yellow':'hp-red'); }
+    if (num) num.textContent = m.hp + ' / ' + m.max_hp + ' HP';
+  });
+
+  const FLAGS = {gate_sigil_discovered:'Gate Sigil Found',aldrens_journal_found:"Aldren's Journal",three_truths_known:'Three Truths Known',gate_opened:'Gate Opened',sundering_truth_revealed:'Sundering Truth',zaras_secret_revealed:"Zara's Secret",kaels_secret_revealed:"Kael's Secret"};
+  const fl = document.getElementById('flags-list');
+  if (fl && s.flags) {
+    fl.innerHTML = '';
+    Object.entries(FLAGS).forEach(([k,v]) => {
+      fl.innerHTML += `<div class="flag"><div class="flag-dot ${s.flags[k]?'fd-on':'fd-off'}"></div><span class="flag-name">${v}</span></div>`;
+    });
+  }
+}
+
+// ── PARTY CARDS ──
+const AGENTS = [
+  {role:'warrior',name:'Bran Ironvale',icon:'⚔️', cls:'warrior'},
+  {role:'mage',   name:'Lyra Vey',     icon:'🔮', cls:'mage'},
+  {role:'rogue',  name:'Zara Dusk',    icon:'🗡️',cls:'rogue'},
+  {role:'healer', name:'Finn Ashroot', icon:'💚', cls:'healer'},
+];
+function buildParty() {
+  const list = document.getElementById('party-list');
+  list.innerHTML = '';
+  AGENTS.forEach(a => {
+    list.innerHTML += `
+      <div class="member ${a.cls}" id="m-${a.role}">
+        <div class="member-top">
+          <div class="member-avatar">${a.icon}</div>
+          <div class="member-info">
+            <div class="member-name">${a.name}</div>
+            <div class="member-role">${a.role}</div>
+          </div>
+        </div>
+        <div class="hp-track"><div class="hp-fill hp-green" id="hp-${a.role}" style="width:100%"></div></div>
+        <div class="hp-num" id="hn-${a.role}">— / — HP</div>
+        <div class="member-speech" id="sp-${a.role}"></div>
+      </div>`;
+  });
+}
+
+function buildFlags() {
+  const FLAGS = {gate_sigil_discovered:'Gate Sigil Found',aldrens_journal_found:"Aldren's Journal",three_truths_known:'Three Truths Known',gate_opened:'Gate Opened',sundering_truth_revealed:'Sundering Truth',zaras_secret_revealed:"Zara's Secret",kaels_secret_revealed:"Kael's Secret"};
+  const fl = document.getElementById('flags-list');
+  Object.entries(FLAGS).forEach(([k,v]) => {
+    fl.innerHTML += `<div class="flag"><div class="flag-dot fd-off"></div><span class="flag-name">${v}</span></div>`;
+  });
+}
+
+// ── SPEAKER HIGHLIGHT ──
+function highlightSpeakers(text) {
+  const map = {warrior:['Bran','sword','shield','armor','fight'],mage:['Lyra','magic','arcane','spell','rune'],rogue:['Zara','sneak','scout','trap','shadow'],healer:['Finn','heal','Silver Root','gentle','herb']};
+  AGENTS.forEach(a => {
+    const el = document.getElementById('m-'+a.role);
+    const sp = document.getElementById('sp-'+a.role);
+    if (!el) return;
+    const hits = (map[a.role]||[]).some(w => text.includes(w));
+    if (hits) {
+      el.classList.add('speaking');
+      if (sp) {
+        const lines = text.split(/[.!?]/);
+        const match = lines.find(l => (map[a.role]||[]).some(w => l.includes(w)));
+        if (match) sp.textContent = '"' + match.trim().slice(0,80) + '…"';
+      }
+    } else {
+      el.classList.remove('speaking');
+      if (sp) sp.textContent = '';
+    }
+  });
+}
+
+// ── INIT CALLS ── (must be after all functions defined)
+buildParty();
+buildFlags();
+
+// ── HELPERS ──
+function scrollFeed() { setTimeout(()=>{ feed.scrollTop=feed.scrollHeight; },30); }
+function setDisabled(v) { busy=v; sendBtn.disabled=v; inputEl.disabled=v; if(!v) inputEl.focus(); }
+function setText(id,v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+function cap(s) { return s?s[0].toUpperCase()+s.slice(1):s; }
+function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
