@@ -1,19 +1,19 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D1117,50:6366F1,100:8B5CF6&height=180&section=header&text=Chronicles%20of%20Eldervale&fontSize=34&fontColor=A78BFA&animation=fadeIn&fontAlignY=40&desc=Multi-Agent%20Fantasy%20RPG%20powered%20by%20Microsoft%20Foundry%20IQ&descAlignY=62&descSize=15&descColor=C4B5FD" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:000000,50:1a1a1a,100:2563EB&height=180&section=header&text=Chronicles%20of%20Eldervale&fontSize=34&fontColor=FFFFFF&animation=fadeIn&fontAlignY=40&desc=Multi-Agent%20Fantasy%20RPG%20powered%20by%20Microsoft%20Foundry%20IQ&descAlignY=62&descSize=15&descColor=2563EB" width="100%"/>
 
 > *The moon shattered 100 years ago. Six AI agents hold the truth. The Centennial is 12 days away.*
 
-[![Microsoft Foundry IQ](https://img.shields.io/badge/Microsoft_Foundry_IQ-6366F1?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://ai.azure.com)
-[![Reasoning Agents](https://img.shields.io/badge/Track-Reasoning_Agents-8B5CF6?style=for-the-badge&logo=target&logoColor=white)](#)
-[![Groq](https://img.shields.io/badge/LLM-Groq_LLaMA_3.3-A78BFA?style=for-the-badge&logo=lightning&logoColor=white)](https://groq.com)
-[![Python](https://img.shields.io/badge/Python_3.10+-0D1117?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Microsoft Foundry IQ](https://img.shields.io/badge/Microsoft_Foundry_IQ-000000?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://ai.azure.com)
+[![Reasoning Agents](https://img.shields.io/badge/Track-Reasoning_Agents-000000?style=for-the-badge&logo=target&logoColor=white)](#)
+[![Groq](https://img.shields.io/badge/LLM-Groq_LLaMA_3.3-000000?style=for-the-badge&logo=lightning&logoColor=white)](https://groq.com)
+[![Python](https://img.shields.io/badge/Python_3.10+-000000?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 
 </div>
 
 <br/>
 
-## `$ hackathon --submission`
+### `H A C K A T H O N   S U B M I S S I O N`
 
 | | |
 |---|---|
@@ -23,15 +23,15 @@
 
 <br/>
 
-## `$ what --is-this`
+### `W H A T   I S   T H I S`
 
-Chronicles of Eldervale is a **multi-agent fantasy RPG** where each character in the game is a separate AI agent with its own personality, memory, and reasoning capabilities. Players explore a dark fantasy world through natural language — typing actions and watching six AI agents collaborate to narrate the story.
-
-This is not a chatbot. It is a **coordinated multi-agent reasoning system** disguised as a game.
+| |
+|:---|
+| Chronicles of Eldervale is a **multi-agent fantasy RPG** where each character in the game is a separate AI agent with its own personality, memory, and reasoning capabilities. Players explore a dark fantasy world through natural language — typing actions and watching six AI agents collaborate to narrate the story. <br/><br/> This is not a chatbot. It is a **coordinated multi-agent reasoning system** disguised as a game. |
 
 <br/>
 
-## `$ cat agents.md`
+### `A G E N T S`
 
 <div align="center">
 
@@ -48,9 +48,7 @@ This is not a chatbot. It is a **coordinated multi-agent reasoning system** disg
 
 <br/>
 
-## `$ trace --reasoning-flow`
-
-Every player turn triggers a **7-step reasoning pipeline**:
+### `R E A S O N I N G   F L O W`
 
 ```
 1. Player types an action
@@ -75,7 +73,7 @@ Every player turn triggers a **7-step reasoning pipeline**:
 
 <br/>
 
-## `$ cat foundry-iq-integration.md`
+### `F O U N D R Y   I Q   I N T E G R A T I O N`
 
 Foundry IQ is the **knowledge backbone** of the entire game. Instead of agents hallucinating world details, they retrieve grounded, cited answers from the knowledge base.
 
@@ -103,35 +101,35 @@ response = mage.respond(situation, lore_context=lore_results)
 
 <br/>
 
-## `$ tree --architecture`
+### `A R C H I T E C T U R E`
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│                Player (Browser)                         │
-│              Chronicles of Eldervale UI                 │
-└────────────────────────┬─────────────────────────────────-─┘
+┌────────────────────────────────────────────────────────┐
+│                Player (Browser)                        │
+│              Chronicles of Eldervale UI                │
+└────────────────────────┬─────────────────────────────-─┘
                           │ HTTP
-┌────────────────────────▼────────────────────────────────-──┐
-│                Flask Web Server                         │
-│                    app.py                                │
-└────────────────────────┬─────────────────────────────────-─┘
+┌────────────────────────▼─────────────────────────────-─┐
+│                Flask Web Server                        │
+│                    app.py                               │
+└────────────────────────┬─────────────────────────────-─┘
                           │
-┌────────────────────────▼────────────────────────────────-──┐
-│              Game Master Agent                           │
-│           agents/game_master.py                          │
-│  • Analyzes player input                                  │
-│  • Queries Foundry IQ                                     │
-│  • Dispatches to character agents                         │
-│  • Resolves dice rolls                                    │
-│  • Narrates final scene                                   │
-└──┬──────────┬──────────┬─────────┬─────────┬───────────-──┘
+┌────────────────────────▼─────────────────────────────-─┐
+│              Game Master Agent                          │
+│           agents/game_master.py                         │
+│  • Analyzes player input                                 │
+│  • Queries Foundry IQ                                    │
+│  • Dispatches to character agents                        │
+│  • Resolves dice rolls                                   │
+│  • Narrates final scene                                  │
+└──┬─────────┬─────────┬─────────┬─────────┬───────────-─┘
    │         │         │         │         │
 ┌──▼──┐  ┌──▼──┐  ┌───▼──┐  ┌───▼──┐  ┌───▼───┐
 │Bran │  │Lyra │  │ Zara │  │ Finn │  │ Kael  │
 │⚔️   │  │🔮   │  │ 🗡️   │  │ 💚   │  │ 😈    │
 └──┬──┘  └──┬──┘  └───┬──┘  └──┬───┘  └───┬───┘
    │        │ Foundry IQ Query │          │
-   └────────┴──────────┬─────────┴───────────┘
+   └────────┴─────────┬────────┴──────────┘
                        │
         ┌──────────────▼──────────────────┐
         │      Microsoft Foundry IQ        │
@@ -139,17 +137,17 @@ response = mage.respond(situation, lore_context=lore_results)
         │  • 24 grounded lore chunks        │
         │  • Semantic search configuration  │
         │  • Cited, permission-aware retrieval│
-        └──────────────────────────────────────┘
+        └──────────────────────────────────┘
                        │
         ┌──────────────▼──────────────────┐
         │      Groq LLaMA 3.3 70B          │
         │   (LLM backbone for all agents)  │
-        └──────────────────────────────────────┘
+        └──────────────────────────────────┘
 ```
 
 <br/>
 
-## `$ ls features/`
+### `F E A T U R E S`
 
 - **Typing animation** — story appears letter by letter like a real RPG
 - **Character highlighting** — agent cards glow when that character speaks
@@ -162,7 +160,7 @@ response = mage.respond(situation, lore_context=lore_results)
 
 <br/>
 
-## `$ setup --run`
+### `S E T U P   &   R U N`
 
 #### Prerequisites
 - Python 3.10+
@@ -218,7 +216,7 @@ Open `http://localhost:5000` and click **Begin Adventure**.
 
 <br/>
 
-## `$ tree --project-structure`
+### `P R O J E C T   S T R U C T U R E`
 
 ```
 chronicles-eldervale/
@@ -243,7 +241,7 @@ chronicles-eldervale/
 
 <br/>
 
-## `$ cat tech-stack.md`
+### `T E C H   S T A C K`
 
 <div align="center">
 
@@ -260,7 +258,7 @@ chronicles-eldervale/
 
 <br/>
 
-## `$ cat security-notes.md`
+### `S E C U R I T Y   N O T E S`
 
 - All data is **synthetic** — no real PII, customer data, or confidential information
 - API keys stored in `.env` (never committed — see `.gitignore`)
@@ -269,7 +267,7 @@ chronicles-eldervale/
 
 <br/>
 
-## `$ cat synthetic-data.md`
+### `S Y N T H E T I C   D A T A`
 
 All game content is synthetic and fictional:
 
@@ -286,6 +284,6 @@ All game content is synthetic and fictional:
 *Track: Reasoning Agents | Challenge B: Role Play Game System*
 *IQ Layer: Foundry IQ (Azure AI Search)*
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:8B5CF6,50:6366F1,100:0D1117&height=100&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2563EB,50:1a1a1a,100:000000&height=100&section=footer" width="100%"/>
 
 </div>
